@@ -140,12 +140,9 @@ def evaluate_ranking(model, test, train=None, k=10):
     else:
         ks = k
 
-    precisions = [list() for _ in range(len(ks))]
-    recalls = [list() for _ in range(len(ks))]
     hitks = [list() for _ in range(len(ks))]
     ndcgks = [list() for _ in range(len(ks))]
-    apks = list()
-
+    
     for user_id, row in enumerate(test):
 
         if not len(row.indices):
@@ -153,9 +150,6 @@ def evaluate_ranking(model, test, train=None, k=10):
 
         predictions = -model.predict(user_id)
         predictions = predictions.argsort()
-
-        print("PREDICTIONS")
-        print(predictions)
 
         if train is not None:
             rated = set(train[user_id].indices)
@@ -166,34 +160,17 @@ def evaluate_ranking(model, test, train=None, k=10):
 
         targets = row.indices
 
-        print('predictions\n')
-        print(predictions)
-        print('target\n')
-        print(targets)
-        # exit()
-
         for i, _k in enumerate(ks):
-            precision, recall = _compute_precision_recall(targets, predictions, _k)
-            precisions[i].append(precision)
-            recalls[i].append(recall)
             hitk = _compute_hitk(targets, predictions, _k)
             hitks[i].append(hitk)
             ndcgk = _compute_ndcgk(targets, predictions, _k)
             ndcgks[i].append(ndcgk)
 
-        apks.append(_compute_apk(targets, predictions, k=np.inf))
-
-    precisions = [np.array(i) for i in precisions]
-    recalls = [np.array(i) for i in recalls]
     hitks = [np.array(i) for i in hitks]
     ndcgks = [np.array(i) for i in ndcgks]
 
     if not isinstance(k, list):
-        precisions = precisions[0]
-        recalls = recalls[0]
         hitks = hitks[0]
         ndcgks = ndcgks[0]
 
-    mean_aps = np.mean(apks)
-
-    return precisions, recalls, hitks, ndcgks, mean_aps
+    return np.mean(ndcgks), np.mean(hitks)

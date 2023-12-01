@@ -4,11 +4,11 @@ from time import time
 import torch.optim as optim
 from torch.autograd import Variable
 
-from caser import Caser
-from evaluation import evaluate_ranking
-# from evaluation import plot_metrics
-from interactions import Interactions
-from utils import *
+from algorithms.caser.caser import Caser
+from algorithms.caser.evaluation import evaluate_ranking
+from algorithms.caser.evaluation import plot_metrics
+from algorithms.caser.interactions import Interactions
+from algorithms.caser.utils import *
 
 
 class Recommender(object):
@@ -191,43 +191,18 @@ class Recommender(object):
             epoch_loss /= minibatch_num + 1
 
             t2 = time()
-            if verbose and (epoch_num + 1) % 1 == 0:
+            if verbose and (epoch_num + 1) % 10 == 0:
                 # Calculate evaluation metrics
-                precision, recall, hitk, ndcgk, mean_aps = evaluate_ranking(self, test, train, k=[1, 5, 10])
-                precisionOne.append(precision[0])
-                precisionFive.append(precision[1])
-                precisionTen.append(precision[2])
-                recallOne.append(recall[0])
-                recallFive.append(recall[1])
-                recallTen.append(recall[0])
-                hitOne.append(hitk[0])
-                hitFive.append(hitk[1])
-                hitTen.append(hitk[2])
-                NDCGone.append(ndcgk[0])
-                NDGCFive.append(ndcgk[1])
-                NDCGTen.append(ndcgk[2])
+                ndcgk, hitk = evaluate_ranking(self, test, train, k=[1, 5, 10])
 
-                output_str = "Epoch %d [%.1f s]\tloss=%.4f, map=%.4f, " \
-                            "prec@1=%.4f, prec@5=%.4f, prec@10=%.4f, " \
-                            "recall@1=%.4f, recall@5=%.4f, recall@10=%.4f, " \
-                            "hit@1=%.4f, hit@5=%.4f, hit@10=%.4f, " \
-                            "ndcg@1=%.4f, ndcg@5=%.4f, ndcg@10=%.4f, [%.1f s]" % (epoch_num + 1,
-                                                                                        t2 - t1,
-                                                                                        epoch_loss,
-                                                                                        mean_aps,
-                                                                                        np.mean(precision[0]),
-                                                                                        np.mean(precision[1]),
-                                                                                        np.mean(precision[2]),
-                                                                                        np.mean(recall[0]),
-                                                                                        np.mean(recall[1]),
-                                                                                        np.mean(recall[2]),
-                                                                                        np.mean(hitk[0]),
-                                                                                        np.mean(hitk[1]),
-                                                                                        np.mean(hitk[2]),
-                                                                                        np.mean(ndcgk[0]),
-                                                                                        np.mean(ndcgk[1]),
-                                                                                        np.mean(ndcgk[2]),
-                                                                                        time() - t2)
+                output_str = "Epoch %d [%.1f s]\tloss=%.4f, " \
+                            "hit@10=%.4f, " \
+                            "ndcg@10=%.4f, [%.1f s]" % (epoch_num + 1,
+                                                        t2 - t1,
+                                                        epoch_loss,
+                                                        hitk,
+                                                        ndcgk,
+                                                        time() - t2)
                 print(output_str)
             else:
                 output_str = "Epoch %d [%.1f s]\tloss=%.4f [%.1f s]" % (epoch_num + 1,
@@ -315,9 +290,6 @@ class Recommender(object):
                             items,
                             for_pred=True)
             
-            print(out)
-            exit()
-
         return out.cpu().numpy().flatten()
 
 

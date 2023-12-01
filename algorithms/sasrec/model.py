@@ -117,6 +117,5 @@ class SASRec(torch.nn.Module):
         logits = item_embs.matmul(final_feat.unsqueeze(-1)).squeeze(-1)
 
         # preds = self.pos_sigmoid(logits) # rank same item list for different users
-        
-        # return logits # preds # (U, I)
-        return logits
+
+        return logits # preds # (U, I)

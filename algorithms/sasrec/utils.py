@@ -81,7 +81,7 @@ def data_partition(fname):
     user_valid = {}
     user_test = {}
     # assume user/item index starting from 1
-    f = open('data/%s.txt' % fname, 'r')
+    f = open('algorithms/sasrec/data/%s.txt' % fname, 'r')
     for line in f:
         u, i = line.rstrip().split(' ')
         u = int(u)
@@ -104,46 +104,9 @@ def data_partition(fname):
             user_test[user].append(User[user][-1])
     return [user_train, user_valid, user_test, usernum, itemnum]
 
-def _compute_hitk(targets, predictions, k):
-
-    if len(predictions) > k:
-        predictions = predictions[:k]
-
-    hits = [p for p in predictions if p in targets]
-
-    return len(hits) / k
-
-def _compute_ndcgk(targets, predictions, k):
-
-    if len(predictions) > k:
-        predictions = predictions[:k]
-
-    dcg = 0.0
-    idcg = 0.0
-
-    for i, p in enumerate(predictions):
-        if p in targets:
-            dcg += 1.0 / np.log2(i + 2)
-
-    for i in range(min(len(targets), k)):
-        idcg += 1.0 / np.log2(i + 2)
-
-    if not list(targets):
-        return 0.0
-
-    return dcg / idcg
-
 # TODO: merge evaluate functions for test and val set
 # evaluate on test set
 def evaluate(model, dataset, args):
-
-    if not isinstance(10, list):
-        ks = [10]
-    else:
-        ks = 10
-
-    hitks = [list() for _ in range(len(ks))]
-    ndcgks = [list() for _ in range(len(ks))]
     [train, valid, test, usernum, itemnum] = copy.deepcopy(dataset)
 
     NDCG = 0.0
@@ -158,8 +121,8 @@ def evaluate(model, dataset, args):
 
         if len(train[u]) < 1 or len(test[u]) < 1: continue
 
-        seq = np.zeros([args.maxlen], dtype=np.int32)
-        idx = args.maxlen - 1
+        seq = np.zeros([args['maxlen']], dtype=np.int32)
+        idx = args['maxlen'] - 1
         seq[idx] = valid[u][0]
         idx -= 1
         for i in reversed(train[u]):
@@ -175,32 +138,24 @@ def evaluate(model, dataset, args):
             item_idx.append(t)
 
         predictions = -model.predict(*[np.array(l) for l in [[u], [seq], item_idx]])
-        _predictions = predictions.cpu().detach().numpy().flatten()
-        _predictions = _predictions.argsort().argsort().argsort()
-        
-        for i, _k in enumerate(ks):
-            hit = _compute_hitk(item_idx, _predictions, _k)
-            hitks[i].append(hit)
+        predictions = predictions[0] # - for 1st argsort DESC
 
-            ndcg = _compute_ndcgk(item_idx, _predictions, _k)
-            ndcgks[i].append(ndcg)
+        rank = predictions.argsort().argsort()[0].item()
 
-    hitks = [np.array(i) for i in hitks]
-    ndcgks = [np.array(i) for i in ndcgks]
-    
-    return np.mean(ndcgks), np.mean(hitks)
+        valid_user += 1
+
+        if rank < 10:
+            NDCG += 1 / np.log2(rank + 2)
+            HT += 1
+        if valid_user % 100 == 0:
+            print('.', end="")
+            sys.stdout.flush()
+
+    return NDCG / valid_user, HT / valid_user
 
 
 # evaluate on val set
 def evaluate_valid(model, dataset, args):
-    if not isinstance(10, list):
-        ks = [10]
-    else:
-        ks = 10
-
-    hitks = [list() for _ in range(len(ks))]
-    ndcgks = [list() for _ in range(len(ks))]
-
     [train, valid, test, usernum, itemnum] = copy.deepcopy(dataset)
 
     NDCG = 0.0
@@ -213,8 +168,8 @@ def evaluate_valid(model, dataset, args):
     for u in users:
         if len(train[u]) < 1 or len(valid[u]) < 1: continue
 
-        seq = np.zeros([args.maxlen], dtype=np.int32)
-        idx = args.maxlen - 1
+        seq = np.zeros([args['maxlen']], dtype=np.int32)
+        idx = args['maxlen'] - 1
         for i in reversed(train[u]):
             seq[idx] = i
             idx -= 1
@@ -229,33 +184,17 @@ def evaluate_valid(model, dataset, args):
             item_idx.append(t)
 
         predictions = -model.predict(*[np.array(l) for l in [[u], [seq], item_idx]])
-        _predictions = predictions.cpu().detach().numpy().flatten()
-        _predictions = _predictions.argsort().argsort().argsort()
-        
-        for i, _k in enumerate(ks):
-            hit = _compute_hitk(item_idx, _predictions, _k)
-            hitks[i].append(hit)
+        predictions = predictions[0]
 
-            ndcg = _compute_ndcgk(item_idx, _predictions, _k)
-            ndcgks[i].append(ndcg)
+        rank = predictions.argsort().argsort()[0].item()
 
-    hitks = [np.array(i) for i in hitks]
-    ndcgks = [np.array(i) for i in ndcgks]
-    
-    return np.mean(ndcgks), np.mean(hitks)
+        valid_user += 1
 
+        if rank < 10:
+            NDCG += 1 / np.log2(rank + 2)
+            HT += 1
+        if valid_user % 100 == 0:
+            print('.', end="")
+            sys.stdout.flush()
 
-        # predictions = predictions[0]
-
-        # rank = predictions.argsort().argsort()[0].item()
-
-        # valid_user += 1
-
-        # if rank < 10:
-        #     NDCG += 1 / np.log2(rank + 2)
-        #     HT += 1
-        # if valid_user % 100 == 0:
-        #     print('.', end="")
-        #     sys.stdout.flush()
-
-    # return NDCG / valid_user, HT / valid_user
+    return NDCG / valid_user, HT / valid_user

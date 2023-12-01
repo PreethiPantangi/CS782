@@ -32,7 +32,7 @@ def _compute_ndcgk(targets, predictions, k):
     return dcg / idcg
 
 def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec'):
-
+    
     if not isinstance(args['k'], list):
         ks = [args['k']]
     else:
@@ -42,6 +42,7 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec'):
     ndcgks = [list() for _ in range(len(ks))]
 
     if algorithm == 'caser':
+        [train, test] = dataset
         test = test.tocsr()
 
         if train is not None:
@@ -63,6 +64,21 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec'):
             predictions = [p for p in predictions if p not in rated]
 
             targets = row.indices
+
+        for i, _k in enumerate(ks):
+            hitk = _compute_hitk(targets, predictions, _k)
+            hitks[i].append(hitk)
+            ndcgk = _compute_ndcgk(targets, predictions, _k)
+            ndcgks[i].append(ndcgk)
+
+        hitks = [np.array(i) for i in hitks]
+        ndcgks = [np.array(i) for i in ndcgks]
+
+        if not isinstance(k, list):
+            hitks = hitks[0]
+            ndcgks = ndcgks[0]
+
+        return np.mean(ndcgks), np.mean(hitks)
     
 
     elif algorithm == 'sasrec':
@@ -73,39 +89,37 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec'):
         else:
             users = range(1, usernum + 1)
         for u in users:
-
-            if len(train[u]) < 1 or len(test[u]) < 1: continue
+            if len(train[u]) < 1 or len(valid[u]) < 1: continue
 
             seq = np.zeros([args['maxlen']], dtype=np.int32)
             idx = args['maxlen'] - 1
-            seq[idx] = valid[u][0]
-            idx -= 1
             for i in reversed(train[u]):
                 seq[idx] = i
                 idx -= 1
                 if idx == -1: break
+
             rated = set(train[u])
             rated.add(0)
-            item_idx = [test[u][0]]
+            item_idx = [valid[u][0]]
             for _ in range(100):
                 t = np.random.randint(1, itemnum + 1)
                 while t in rated: t = np.random.randint(1, itemnum + 1)
                 item_idx.append(t)
 
             predictions = -model.predict(*[np.array(l) for l in [[u], [seq], item_idx]])
-            predictions = predictions
-            targets = predictions.argsort().argsort().argsort()
+            _predictions = predictions.cpu().detach().numpy().flatten()
+            _predictions = _predictions.argsort().argsort().argsort()
             
-    for i, _k in enumerate(ks):
-        hitk = _compute_hitk(targets, predictions, _k)
-        hitks[i].append(hitk)
-        ndcgk = _compute_ndcgk(targets, predictions, _k)
-        ndcgks[i].append(ndcgk)
+            for i, _k in enumerate(ks):
+                hit = _compute_hitk(item_idx, _predictions, _k)
+                hitks[i].append(hit)
 
-    hitks = [np.array(i) for i in hitks]
-    ndcgks = [np.array(i) for i in ndcgks]
+                ndcg = _compute_ndcgk(item_idx, _predictions, _k)
+                ndcgks[i].append(ndcg)
 
-    if not isinstance(args['k'], list):
-        hitks = hitks[0]
-        ndcgks = ndcgks[0]
-    return np.mean(ndcgks), np.mean(hitks)
+        hitks = [np.array(i) for i in hitks]
+        ndcgks = [np.array(i) for i in ndcgks]
+
+        return np.mean(ndcgks), np.mean(hitks)
+
+    

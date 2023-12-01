@@ -5,6 +5,7 @@ import argparse
 
 from algorithms.sasrec.utils import *
 from algorithms.sasrec.model import SASRec
+from evaluation.evaluation import evaluate_metrics
 
 def SasRec(dataset, train_dir, maxlen, dropout_rate, device):
     print('SasRec')
@@ -16,7 +17,7 @@ def SasRec(dataset, train_dir, maxlen, dropout_rate, device):
         'maxlen':maxlen,
         'hidden_units': 50,
         'num_blocks': 2,
-        'num_epochs': 20,
+        'num_epochs': 201,
         'num_heads': 1,
         'dropout_rate': dropout_rate,
         'l2_emb': 0.0,
@@ -75,7 +76,8 @@ def SasRec(dataset, train_dir, maxlen, dropout_rate, device):
     
     if args['inference_only']:
         model.eval()
-        t_test = evaluate(model, dataset, args)
+        args['k'] = 10
+        t_test = evaluate_metrics(model, dataset, args)
         print('test (NDCG@10: %.4f, HR@10: %.4f)' % (t_test[0], t_test[1]))
     
     # ce_criterion = torch.nn.CrossEntropyLoss()
@@ -109,8 +111,9 @@ def SasRec(dataset, train_dir, maxlen, dropout_rate, device):
                 t1 = time.time() - t0
                 T += t1
                 print('Evaluating', end='')
-                t_test = evaluate(model, dataset, args)
-                t_valid = evaluate_valid(model, dataset, args)
+                args['k'] = 10
+                t_test = evaluate_metrics(model, dataset, args)
+                t_valid = evaluate_metrics(model, dataset, args)
                 print('epoch:%d, time: %f(s), valid (NDCG@10: %.4f, HR@10: %.4f), test (NDCG@10: %.4f, HR@10: %.4f)'
                         % (epoch, T, t_valid[0], t_valid[1], t_test[0], t_test[1]))
         

@@ -10,7 +10,6 @@ def caser():
     # data arguments
     parser.add_argument('--train_root', type=str, default='./algorithms/caser/datasets/ml1m/test/train.txt')
     parser.add_argument('--test_root', type=str, default='./algorithms/caser/datasets/ml1m/test/test.txt')
-    parser.add_argument('--valid_root', type=str, default='./algorithms/caser/datasets/ml1m/test/test.txt')
     parser.add_argument('--L', type=int, default=5)
     parser.add_argument('--T', type=int, default=3)
     # train arguments
@@ -48,12 +47,10 @@ def caser():
     test = Interactions(config.test_root,
                         user_map=train.user_map,
                         item_map=train.item_map)
-    
-    valid = Interactions(config.valid_root)
 
     print(config)
     print(model_config)
     # fit model
     model = Recommender(n_iter=config.n_iter, batch_size=config.batch_size, learning_rate=config.learning_rate, l2=config.l2, neg_samples=config.neg_samples, model_args=model_config, use_cuda=config.use_cuda)
 
-    model.fit(train, test, valid, verbose=True)
+    model.fit(train, test, verbose=True)
