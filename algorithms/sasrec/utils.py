@@ -97,9 +97,12 @@ def data_partition(fname):
             user_valid[user] = []
             user_test[user] = []
         else:
+            # Martians: Appends the elements from beginning to the last 11th index from the dataset to train dataset
             user_train[user] = User[user][:-11]
+            # Martians: Appends the elements from last 20 to 11 index leaving the last 10 elements from the dataset to valid dataset
             user_valid[user] = []
             user_valid[user].append(User[user][-20:-10])
+            # Martians: Appends the last 10 elements from the dataset to test dataset
             user_test[user] = []
             user_test[user].append(User[user][-10:])
     return [user_train, user_valid, user_test, usernum, itemnum]

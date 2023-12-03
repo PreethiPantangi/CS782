@@ -9,6 +9,7 @@ def parse(path):
             l = l.replace('true', 'True').replace('false', 'False')
             yield eval(l)
 
+# Martians: Data pre processing datasets amazon beauty and movie lens. 
 def datapreprocessing(dataset):
     countU = defaultdict(lambda: 0)
     countP = defaultdict(lambda: 0)
@@ -67,7 +68,7 @@ def datapreprocessing(dataset):
             f.write('%d %d\n' % (user, i[1]))
             interactions.append((user, i[1]))
 
-
+    # Splitting the data into train and test datasets
     train_interactions, test_interactions = train_test_split(interactions, test_size=0.2, random_state=42)
     with open('data/' + dataset + '/train.txt', 'w') as train_file:
         for user, item in train_interactions:

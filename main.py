@@ -2,6 +2,7 @@ from algorithms.sasrec.main import SasRec
 from algorithms.caser.main import caser
 from datapreprocessing.datapreprocessing import datapreprocessing
 
+# Martians: Library for Sequential Recommendation algorithms SASRec, Caser, and Bert4Rec
 class Recommendation:
 
     def __init__(self):
@@ -21,6 +22,7 @@ class Recommendation:
 
 if __name__ == '__main__':
     dataset = 'beauty'
+    # Martians: Pre-processing data based on the dataset name.
     datapreprocessing(dataset=dataset)
     recommendation = Recommendation()
     recommendation.sasrec(dataset)

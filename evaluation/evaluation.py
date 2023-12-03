@@ -2,6 +2,8 @@ import numpy as np
 import random
 import copy
 
+# Martians: _compute_hitk takes target, predictions, and an integer k. 
+# It computes the hit@k metric, i.e., the proportion of next correct predictions within the top k predictions.
 def _compute_hitk(targets, predictions, k):
 
     if len(predictions) > k:
@@ -10,7 +12,8 @@ def _compute_hitk(targets, predictions, k):
     hits = [p for p in predictions if p in targets]
 
     return len(hits) / k
-
+# Martians: _compute_ndcgk calculates the Normalized Discounted Cumulative Gain (NDCG) at k for the 
+# list of target and prediction values by using logarithmic weighting. 
 def _compute_ndcgk(targets, predictions, k):
 
     if len(predictions) > k:
@@ -31,6 +34,7 @@ def _compute_ndcgk(targets, predictions, k):
 
     return dcg / idcg
 
+# Martians: Single evaluation function to calculate hit and ndcg values without bias.
 def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec', isTest=None):
     
     if not isinstance(args['k'], list):
