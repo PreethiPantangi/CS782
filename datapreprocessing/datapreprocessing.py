@@ -1,7 +1,7 @@
 import gzip
 from collections import defaultdict
 from datetime import datetime
-
+from sklearn.model_selection import train_test_split
 
 def parse(path):
     with gzip.open(path, 'rt', encoding='utf-8') as g:
@@ -36,8 +36,8 @@ for l in parse('reviews_' + dataset_name + '.json.gz'):
     asin = l['asin']
     rev = l['reviewerID']
     time = l['unixReviewTime']
-    # if countU[rev] < 5 or countP[asin] < 5:
-    #     continue
+    if countU[rev] < 5 or countP[asin] < 5:
+        continue
 
     if rev in usermap:
         userid = usermap[rev]
@@ -52,17 +52,28 @@ for l in parse('reviews_' + dataset_name + '.json.gz'):
         itemnum += 1
         itemid = itemnum
         itemmap[asin] = itemid
-    if usernum < 150000:
-        User[userid].append([time, itemid])
+    User[userid].append([time, itemid])
 # sort reviews in User according to time
 
 for userid in User.keys():
     User[userid].sort(key=lambda x: x[0])
 
-print(usernum, itemnum)
+print (usernum, itemnum)
 
+interactions = []
 f = open('../data/beauty.txt', 'w')
 for user in User.keys():
     for i in User[user]:
         f.write('%d %d\n' % (user, i[1]))
+        interactions.append((user, i[1]))
+
+train_interactions, test_interactions = train_test_split(interactions, test_size=0.2, random_state=42)
+with open('../data/beauty/train.txt', 'w') as train_file:
+    for user, item in train_interactions:
+        train_file.write('%d %d\n' % (user, item))
+
+with open('../data/beauty/test.txt', 'w') as test_file:
+    for user, item in test_interactions:
+        test_file.write('%d %d\n' % (user, item))
+
 f.close()

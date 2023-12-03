@@ -81,7 +81,7 @@ def data_partition(fname):
     user_valid = {}
     user_test = {}
     # assume user/item index starting from 1
-    f = open('algorithms/data/beauty.txt', 'r')
+    f = open('algorithms/sasrec/data/ml-1m.txt', 'r')
     for line in f:
         u, i = line.rstrip().split(' ')
         u = int(u)
@@ -102,7 +102,12 @@ def data_partition(fname):
             user_valid[user].append(User[user][-20:-10])
             user_test[user] = []
             user_test[user].append(User[user][-10:])
-
+            print('TRAIN')
+            print(user_train)
+            print('VALID')
+            print(user_valid)
+            print('TEST')
+            print(user_test)
     return [user_train, user_valid, user_test, usernum, itemnum]
 
 # TODO: merge evaluate functions for test and val set
