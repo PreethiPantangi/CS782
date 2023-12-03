@@ -74,7 +74,7 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec', is
         hitks = [np.array(i) for i in hitks]
         ndcgks = [np.array(i) for i in ndcgks]
 
-        if not isinstance(k, list):
+        if not isinstance(10, list):
             hitks = hitks[0]
             ndcgks = ndcgks[0]
 
@@ -119,5 +119,5 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec', is
 
             ndcg = _compute_hitk(target, predictions, 10)
             ndcgs.append(ndcg)
-            
+
         return np.mean(ndcgs), np.mean(hits)
