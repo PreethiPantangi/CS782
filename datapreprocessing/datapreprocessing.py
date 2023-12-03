@@ -36,8 +36,8 @@ for l in parse('reviews_' + dataset_name + '.json.gz'):
     asin = l['asin']
     rev = l['reviewerID']
     time = l['unixReviewTime']
-    if countU[rev] < 5 or countP[asin] < 5:
-        continue
+    # if countU[rev] < 5 or countP[asin] < 5:
+    #     continue
 
     if rev in usermap:
         userid = usermap[rev]
@@ -52,7 +52,8 @@ for l in parse('reviews_' + dataset_name + '.json.gz'):
         itemnum += 1
         itemid = itemnum
         itemmap[asin] = itemid
-    User[userid].append([time, itemid])
+    if usernum < 150000:
+        User[userid].append([time, itemid])
 # sort reviews in User according to time
 
 for userid in User.keys():
