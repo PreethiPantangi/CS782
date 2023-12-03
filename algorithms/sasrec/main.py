@@ -25,7 +25,7 @@ def SasRec(dataset, train_dir, maxlen, dropout_rate, device):
         'inference_only': False,
         'state_dict_path': None
     }
-    path = 'recommendation/algorithms/SasRec/'
+    path = 'algorithms/sasrec/'
     if not os.path.isdir(path + args['dataset'] + '_' + args['train_dir']):
         print()
         print('PATH - ', path + args['dataset'] + '_' + args['train_dir'])

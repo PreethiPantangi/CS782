@@ -81,7 +81,7 @@ def data_partition(fname):
     user_valid = {}
     user_test = {}
     # assume user/item index starting from 1
-    f = open('algorithms/sasrec/data/ml-1m.txt', 'r')
+    f = open('algorithms/data/beauty.txt', 'r')
     for line in f:
         u, i = line.rstrip().split(' ')
         u = int(u)

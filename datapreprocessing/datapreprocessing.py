@@ -60,7 +60,7 @@ for userid in User.keys():
 
 print(usernum, itemnum)
 
-f = open('/data/beauty/' + 'beauty.txt', 'w')
+f = open('../data/beauty.txt', 'w')
 for user in User.keys():
     for i in User[user]:
         f.write('%d %d\n' % (user, i[1]))
