@@ -9,13 +9,13 @@ def parse(path):
             l = l.replace('true', 'True').replace('false', 'False')
             yield eval(l)
 
-def datapreprocessing(self, dataset):
+def datapreprocessing(dataset):
     countU = defaultdict(lambda: 0)
     countP = defaultdict(lambda: 0)
     line = 0
 
-    f = open('reviews_' + dataset + '.txt', 'w')
-    for l in parse('reviews_' + dataset + '.json.gz'):
+    f = open('datapreprocessing/reviews_' + dataset + '.txt', 'w')
+    for l in parse('datapreprocessing/reviews_' + dataset + '.json.gz'):
         line += 1
         f.write(" ".join([l['reviewerID'], l['asin'], str(l['overall']), str(l['unixReviewTime'])]) + ' \n')
         asin = l['asin']
@@ -30,7 +30,7 @@ def datapreprocessing(self, dataset):
     itemmap = dict()
     itemnum = 0
     User = dict()
-    for l in parse('reviews_' + dataset + '.json.gz'):
+    for l in parse('datapreprocessing/reviews_' + dataset + '.json.gz'):
         line += 1
         asin = l['asin']
         rev = l['reviewerID']
@@ -59,9 +59,8 @@ def datapreprocessing(self, dataset):
 
     print (usernum, itemnum)
 
-    dataset = 'ml-1m'
     interactions = []
-    f = open('../data/' + dataset + '/' + dataset + '.txt', 'w')
+    f = open('data/' + dataset + '/' + dataset + '.txt', 'w')
     
     for user in User.keys():
         for i in User[user]:
@@ -70,11 +69,11 @@ def datapreprocessing(self, dataset):
 
 
     train_interactions, test_interactions = train_test_split(interactions, test_size=0.2, random_state=42)
-    with open('../data/' + dataset + '/train.txt', 'w') as train_file:
+    with open('data/' + dataset + '/train.txt', 'w') as train_file:
         for user, item in train_interactions:
             train_file.write('%d %d\n' % (user, item))
 
-    with open('../data/' + dataset + '/test.txt', 'w') as test_file:
+    with open('data/' + dataset + '/test.txt', 'w') as test_file:
         for user, item in test_interactions:
             test_file.write('%d %d\n' % (user, item))
 

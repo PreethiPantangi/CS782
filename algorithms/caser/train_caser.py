@@ -271,7 +271,7 @@ class Recommender(object):
         # set model to evaluation model
         self._net.eval()
         with torch.no_grad():
-            sequences_np = self.test_sequence.sequences[user_id, :]
+            sequences_np = self.test_sequence.sequences[user_id-1, :]
             sequences_np = np.atleast_2d(sequences_np)
 
             if item_ids is None:
