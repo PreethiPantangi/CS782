@@ -97,8 +97,8 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec', is
             else:
                 if len(train[u]) < 1 or len(valid[u]) < 1: continue
 
-            seq = np.zeros([args.maxlen], dtype=np.int32)
-            idx = args.maxlen - 1
+            seq = np.zeros([args['maxlen']], dtype=np.int32)
+            idx = args['maxlen'] - 1
             for i in reversed(train[u]):
                 seq[idx] = i
                 idx -= 1
