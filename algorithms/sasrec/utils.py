@@ -81,7 +81,7 @@ def data_partition(fname):
     user_valid = {}
     user_test = {}
     # assume user/item index starting from 1
-    f = open('data/beauty/beauty.txt', 'r')
+    f = open('data/' + fname + '/' + fname + '.txt', 'r')
     for line in f:
         u, i = line.rstrip().split(' ')
         u = int(u)

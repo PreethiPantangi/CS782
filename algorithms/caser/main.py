@@ -4,12 +4,12 @@ from algorithms.caser.interactions import Interactions
 from algorithms.caser.utils import *
 from algorithms.caser.train_caser import Recommender
 
-def caser():
+def caser(dataset):
     print("In __main__")
     parser = argparse.ArgumentParser()
     # data arguments
-    parser.add_argument('--train_root', type=str, default='./algorithms/caser/datasets/ml1m/test/train.txt')
-    parser.add_argument('--test_root', type=str, default='./algorithms/caser/datasets/ml1m/test/test.txt')
+    parser.add_argument('--train_root', type=str, default='./data/' + dataset + '/train.txt')
+    parser.add_argument('--test_root', type=str, default='./data/' + dataset + '/test.txt')
     parser.add_argument('--L', type=int, default=5)
     parser.add_argument('--T', type=int, default=3)
     # train arguments
