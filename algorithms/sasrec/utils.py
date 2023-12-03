@@ -97,11 +97,12 @@ def data_partition(fname):
             user_valid[user] = []
             user_test[user] = []
         else:
-            user_train[user] = User[user][:-2]
+            user_train[user] = User[user][:-11]
             user_valid[user] = []
-            user_valid[user].append(User[user][-2])
+            user_valid[user].append(User[user][-20:-10])
             user_test[user] = []
-            user_test[user].append(User[user][-1])
+            user_test[user].append(User[user][-10:])
+
     return [user_train, user_valid, user_test, usernum, itemnum]
 
 # TODO: merge evaluate functions for test and val set

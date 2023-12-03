@@ -31,7 +31,7 @@ def _compute_ndcgk(targets, predictions, k):
 
     return dcg / idcg
 
-def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec'):
+def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec', isTest=None):
     
     if not isinstance(args['k'], list):
         ks = [args['k']]
@@ -82,6 +82,9 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec'):
     
 
     elif algorithm == 'sasrec':
+        hits = []
+        ndcgs = []
+
         [train, valid, test, usernum, itemnum] = copy.deepcopy(dataset)
         
         if usernum>10000:
@@ -89,10 +92,13 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec'):
         else:
             users = range(1, usernum + 1)
         for u in users:
-            if len(train[u]) < 1 or len(valid[u]) < 1: continue
+            if isTest:
+                if len(train[u]) < 1 or len(test[u]) < 1: continue
+            else:
+                if len(train[u]) < 1 or len(valid[u]) < 1: continue
 
-            seq = np.zeros([args['maxlen']], dtype=np.int32)
-            idx = args['maxlen'] - 1
+            seq = np.zeros([args.maxlen], dtype=np.int32)
+            idx = args.maxlen - 1
             for i in reversed(train[u]):
                 seq[idx] = i
                 idx -= 1
@@ -100,26 +106,18 @@ def evaluate_metrics(model=None, dataset=None, args=None, algorithm='sasrec'):
 
             rated = set(train[u])
             rated.add(0)
-            item_idx = [valid[u][0]]
-            for _ in range(100):
-                t = np.random.randint(1, itemnum + 1)
-                while t in rated: t = np.random.randint(1, itemnum + 1)
-                item_idx.append(t)
+            target = valid[u][0]
+
+            item_idx = np.arange(itemnum+1)
 
             predictions = -model.predict(*[np.array(l) for l in [[u], [seq], item_idx]])
-            _predictions = predictions.cpu().detach().numpy().flatten()
-            _predictions = _predictions.argsort().argsort().argsort()
+            predictions = predictions[0]
+            predictions = predictions.argsort()
+
+            hit = _compute_hitk(target, predictions, 10)
+            hits.append(hit)
+
+            ndcg = _compute_hitk(target, predictions, 10)
+            ndcgs.append(ndcg)
             
-            for i, _k in enumerate(ks):
-                hit = _compute_hitk(item_idx, _predictions, _k)
-                hitks[i].append(hit)
-
-                ndcg = _compute_ndcgk(item_idx, _predictions, _k)
-                ndcgks[i].append(ndcg)
-
-        hitks = [np.array(i) for i in hitks]
-        ndcgks = [np.array(i) for i in ndcgks]
-
-        return np.mean(ndcgks), np.mean(hitks)
-
-    
+        return np.mean(ndcgs), np.mean(hits)

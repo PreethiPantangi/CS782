@@ -8,7 +8,7 @@ class Recommendation:
 
     def sasrec(self):
         SasRec(
-            dataset='ml-1m',
+            dataset='beauty',
             train_dir='default',
             maxlen=200,
             dropout_rate=0.2,
