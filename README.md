@@ -26,5 +26,8 @@ future <br/>
 
 python main.py
 
-### In case you would like to use the module in your code you can call the desired algorithm (SASRec, Case, or Bert4Rec) on Recommendation class from main.py and specify the dataset name (ml-1m or beauty)
+In case you would like to use the module in your code you can call the desired algorithm (SASRec, Case, or Bert4Rec) on Recommendation class from main.py and specify the dataset name (ml-1m or beauty) <br/>
+Ex: Recommendation.sasrec('beauty') <br/>
+Ex: Recommendation.caser('ml-1m') <br/>
+Ex: Recommendation.bert4rec('ml-1m') <br/>
 
