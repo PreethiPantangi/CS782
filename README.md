@@ -26,6 +26,7 @@ future <br/>
 
 python main.py
 
+## Using Recommendation class in your code
 In case you would like to use the module in your code you can call the desired algorithm (sasrec, caser, or bert4rec) on Recommendation class from main.py and specify the dataset name (ml-1m or beauty) <br/>
 Ex: Recommendation.sasrec('beauty') <br/>
 Ex: Recommendation.caser('ml-1m') <br/>
