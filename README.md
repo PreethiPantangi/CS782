@@ -4,9 +4,9 @@ Sequential RecSys is an open-Source PyTorch based library, inspired by the struc
 
 ## Datasets
 
-Movie Lens 1M-https://grouplens.org/datasets/movielens/1m/ <br/>
+Movie Lens 1M - https://grouplens.org/datasets/movielens/1m/ <br/>
 
-Amazon Beauty-https://jmcauley.ucsd.edu/data/amazon/index.html
+Amazon Beauty - https://jmcauley.ucsd.edu/data/amazon/index.html
 
 ## Requirements
 
@@ -25,4 +25,6 @@ future <br/>
 ## Command to execute the code 
 
 python main.py
+
+### In case you would like to use the module in your code you can call the desired algorithm (SASRec, Case, or Bert4Rec) on Recommendation class from main.py and specify the dataset name (ml-1m or beauty)
 
