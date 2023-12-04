@@ -7,3 +7,7 @@ Sequential RecSys is an open-Source PyTorch based library, inspired by the struc
 Movie Lens 1M <br/>
 
 Amazon Beauty
+
+## Command to execute the code 
+
+python main.py
