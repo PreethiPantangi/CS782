@@ -60,56 +60,6 @@ def _compute_ndcgk(targets, predictions, k):
 
     return dcg / idcg
 
-def plot_metrics(precision, recall, hitk, ndcgk, k_values):
-    count = 1
-    sns.set_style("whitegrid")
-
-    # Plot Precision@k
-    plt.figure(figsize=(10, 5))
-    for i, k in enumerate(k_values):
-        plt.plot(precision[i], label=f'Precision@{k}')
-    plt.xlabel('Epochs')
-    plt.ylabel('Precision')
-    plt.legend()
-    plt.title('Precision@k')
-    plt.savefig('Precision' + count)
-    count+=1
-
-    # Plot Recall@k
-    plt.figure(figsize=(10, 5))
-    for i, k in enumerate(k_values):
-        plt.plot(recall[i], label=f'Recall@{k}')
-    plt.xlabel('Epochs')
-    plt.ylabel('Recall')
-    plt.legend()
-    plt.title('Recall@k')
-    plt.savefig('Recall' + count)
-    count+=1
-
-    # Plot Hit@k
-    plt.figure(figsize=(10, 5))
-    for i, k in enumerate(k_values):
-        plt.plot(hitk[i], label=f'Hit@{k}')
-    plt.xlabel('Epochs')
-    plt.ylabel('Hit@k')
-    plt.legend()
-    plt.title('Hit@k')
-    plt.savefig('Hit' + count)
-    count+=1
-
-    # Plot NDCG@k
-    plt.figure(figsize=(10, 5))
-    for i, k in enumerate(k_values):
-        plt.plot(ndcgk[i], label=f'NDCG@{k}')
-    plt.xlabel('Epochs')
-    plt.ylabel('NDCG@k')
-    plt.legend()
-    plt.title('NDCG@k')
-    plt.savefig('NDCG' + count)
-    count+=1
-
-
-
 def evaluate_ranking(model, test, train=None, k=10):
     """
     Compute Precision@k, Recall@k, Hit@k, NDCG@k scores and average precision (AP).

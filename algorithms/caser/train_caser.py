@@ -210,9 +210,6 @@ class Recommender(object):
                                                                         epoch_loss,
                                                                         time() - t2)
                 print(output_str)
-        plot_metrics(precisionOne, recallOne, hitOne, NDCGone, [1, 5, 10])
-        plot_metrics(precisionFive, recallFive, hitFive, NDGCFive, [1, 5, 10])
-        plot_metrics(precisionTen, recallTen, hitTen, NDCGTen, [1, 5, 10])
 
 
     def _generate_negative_samples(self, users, interactions, n):
