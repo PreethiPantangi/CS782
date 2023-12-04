@@ -4,5 +4,5 @@ Sequential RecSys is an open-Source PyTorch based library, inspired by the struc
 
 ## Datasets
 
-### Movie Lens 1M
-### Amazon Beauty
+Movie Lens 1M
+Amazon Beauty
