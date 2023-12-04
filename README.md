@@ -8,6 +8,21 @@ Movie Lens 1M-https://grouplens.org/datasets/movielens/1m/ <br/>
 
 Amazon Beauty-https://jmcauley.ucsd.edu/data/amazon/index.html
 
+## Requirements
+
+Python 2 or 3 <br/>
+PyTorch v0.4+ <br/>
+Numpy <br/>
+SciPy <br/>
+wget <br/>
+tqdm <br/>
+torch <br/>
+tb-nightly <br/>
+pandas <br/>
+scipy <br/>
+future <br/>
+
 ## Command to execute the code 
 
 python main.py
+
