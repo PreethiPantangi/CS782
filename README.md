@@ -32,3 +32,8 @@ Ex: Recommendation.sasrec('beauty') <br/>
 Ex: Recommendation.caser('ml-1m') <br/>
 Ex: Recommendation.bert4rec('ml-1m') <br/>
 
+### Caser - Plot for HIT and NDCG vs Epoch
+![caser_metrics](https://github.com/PreethiPantangi/CS782/assets/22561209/5f41d5ae-44a8-4601-a2ba-b1186bdde219)
+
+### NDCG - Plot for NDCG vs Epoch
+![bert4rec_metrics](https://github.com/PreethiPantangi/CS782/assets/22561209/692bb8a8-0c9c-4ba6-9c08-03d867a66018)
